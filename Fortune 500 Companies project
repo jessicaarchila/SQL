@@ -1,0 +1,55 @@
+--This query was used at the very start of the project to select all of the information within the dataset in order to analyze and filter the data to return certain values.
+
+SELECT *
+FROM fortune_companies;
+
+--This query was written to show which company and industry has the highest employee tenure.
+It is filtered to show the average employee tenure greater than 5 years and include the healthcare industry or the technology industry.
+The values are then ordered by descending to show the greatest tenure first. 
+
+SELECT company_name,industry,avg_employee_tenure
+FROM fortune_companies
+WHERE avg_employee_tenure>=5 AND industry="Healthcare" OR industry= "Technology"
+ORDER BY avg_employee_tenure desc;
+
+--This query was written to get the reults of which company and industry has the fewest employees. The sum of employees was selected to determine the number of employees.
+A new column was created labeled as "total employees". 
+This was done by filtering the group by values of industry, then taking these values and filtering it using the having clause. 
+Where it returns the total number of employees in a company and industry containing less than 100000 employees.
+These results were filtered in ascending order to ensure the company with the least number of employees shows up at the top.
+
+SELECT company_name,industry,SUM(employees) AS total_employees
+FROM fortune_companies
+GROUP BY industry
+HAVING total_employees<100000
+ORDER BY total_employees asc;
+                                
+ --This query was written to return the results of the company name and the minimum amount of maternity leave weeks offered by the finance industry. 
+
+SELECT company_name,industry,MIN(maternity_leave_weeks)AS maternity_leave_weeks
+FROM fortune_companies
+WHERE industry="Finance";
+         
+
+--This query was written to return results containing the  maximum amount of paid time off days which was filtered per industry using the group by and having clause. 
+The results returned should include values greater than 20 and are ordered by descending order to show the greatest value at the top.
+
+SELECT company_name,industry,MAX(paid_time_off_days) AS "Amount of PTO days"
+FROM fortune_companies
+GROUP BY industry
+HAVING "Amount of PTO days" >20
+ORDER BY "Amount of PTO days" desc;
+
+
+
+--This query was written with the case statement in order to return information based on revenue per company and industry. 
+The values were categorized in the new column created and are ordered by desceding value to show the top % of earning revenues.
+
+SELECT company_name,industry,revenue
+,CASE WHEN revenue>=400.00 THEN "Top % earning revenue"
+WHEN revenue>=200.00 THEN "Medium % earning revenue"
+WHEN revenue>=100.00 THEN "Lowest % earning revenue"
+ELSE "Bottom % earning revenue" END AS "company revenue ranking"
+FROM fortune_companies
+GROUP BY industry
+ORDER BY "company revenue ranking" desc;
