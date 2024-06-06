@@ -1,0 +1,177 @@
+# These Queries are representative of the analysis of a digital media store dataset
+which consists of various tables like artists, albums,media tracks,invoices and customer information.
+
+
+#1. Show Customers (their full names, customer ID, and country) who are not in the US.
+
+SELECT CustomerId,FirstName,LastName,Country
+FROM chinook.customers
+WHERE Country <>'US';
+
+#2. Show only the Customers from Brazil.
+
+SELECT FirstName,LastName,Country
+FROM chinook.customers
+WHERE Country ='Brazil';
+
+#3. Find the Invoices of customers who are from Brazil. The resulting table should show the customer's full name, Invoice ID, Date of the invoice, and billing country.
+
+SELECT customers.firstname,
+customers.lastname,
+invoices.invoiceid,
+invoices.invoicedate,
+invoices.billingcountry
+FROM customers 
+JOIN invoices 
+ON customers.customerId= invoices.CustomerId
+WHERE invoices.BillingCountry='Brazil';
+
+
+#4. Show the Employees who are Sales Agents.
+
+SELECT firstname,lastname,title
+FROM employees
+WHERE title='Sales Support Agent';
+
+
+#5. Find a unique/distinct list of billing countries from the Invoice table.
+
+SELECT DISTINCT BillingCountry,Billingcity,BillingAddress
+FROM invoices
+WHERE BillingCountry='Canada';
+
+
+#6. Provide a query that shows the invoices associated with each sales agent.The resulting table should include the Sales Agent's full name.
+
+SELECT employees.FirstName,
+employees.LastName,
+invoices.InvoiceId
+FROM employees
+JOIN invoices 
+ON employees.EmployeeId=invoices.InvoiceId
+WHERE title='Sales Support Agent';
+
+#7. Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.
+
+SELECT 
+invoices.total as 'Invoice Total',
+customers.firstname as 'Customer First Name',
+customers.lastname as 'Customer Last Name',
+customers.Country,
+employees.firstname as 'Sales Agent First Name',
+employees.lastname as 'Sales Agent Last Name'
+FROM customers
+JOIN employees
+JOIN invoices
+ON customers.SupportRepId=employees.EmployeeId=invoices.InvoiceId;
+
+#8. How many Invoices were there in 2009?
+
+SELECT COUNT(invoicedate)
+FROM invoices
+WHERE invoicedate like '2009%';
+
+#9. What are the total sales for 2009?
+
+SELECT SUM(total) as 'Total sales for 2009'
+FROM invoices
+WHERE invoicedate like '2009%';
+
+#10. Write a query that includes the purchased track name with each invoice line ID.
+
+SELECT tracks.Name,invoice_items.InvoiceLineId
+FROM tracks
+JOIN invoice_items
+ON tracks.UnitPrice=invoice_items.UnitPrice;
+
+#11. Write a query that includes the purchased track name AND artist name with each invoice line ID.
+
+SELECT 
+tracks.Name as 'Track Name',
+artists.Name as 'Artist Name',
+invoice_items.InvoiceLineId
+FROM tracks
+JOIN artists
+JOIN invoice_items
+ON tracks.TrackId=artists.ArtistId=invoice_items.TrackId;
+
+
+#12. Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+
+SELECT tracks.Name as 'Track Name',
+albums.Title as 'Album Title',
+media_types.Name as 'Media Type',
+genres.Name as 'Genre'
+FROM tracks
+JOIN albums
+JOIN media_types
+JOIN genres
+ON tracks.MediaTypeId=albums.ArtistId=media_types.MediaTypeId=genres.GenreId;
+
+#13 Show the total sales made by each sales agent.
+
+SELECT invoices.Total,
+employees.FirstName,
+employees.LastName,
+employees.Title
+FROM invoices
+JOIN employees
+ON invoices.customerId=employees.EmployeeId
+WHERE employees.Title='Sales Support Agent';
+
+#14. Which sales agent made the most dollars in sales in 2009?
+
+SELECT employees.FirstName,
+employees.LastName,
+employees.Title,
+MAX(invoices.Total) as 'Total Amount',
+invoices.InvoiceDate
+FROM employees
+JOIN invoices
+ON Employees.EmployeeId=invoices.CustomerId
+WHERE employees.Title like 'Sales Support Agent%' AND invoices.InvoiceDate like'2009%';
+
+#15. Identify the composers,the track name,and the artist in the 'Rock' Genre.
+
+SELECT tracks.Composer,
+tracks.Name as 'Track Name',
+artists.Name as 'Artist Name',
+genres.Name as 'Genre'
+FROM tracks
+JOIN artists
+JOIN genres
+ON tracks.TrackId=artists.ArtistId=genres.GenreId
+WHERE genres.Name = 'Rock';
+
+#16. Find which track has the least amount of milliseconds.
+
+SELECT MIN(milliseconds),name
+FROM tracks;
+
+#17. What are the common BillingCities for the Invoices from France?
+
+SELECT DISTINCT Billingcity
+FROM invoices
+WHERE BillingCountry='France';
+
+#18. what are the employees birthdays from oldest to youngest? What are their names and positions?
+SELECT Birthdate,Firstname,Lastname,title
+FROM employees
+ORDER BY Birthdate asc;
+
+#19. List the artist and song name that has the most amount of Bytes. 
+SELECT MAX(tracks.Bytes) as 'Bytes',
+tracks.Name as 'Track Name',
+artists.Name as 'Artist Name'
+FROM tracks
+JOIN artists
+ON tracks.AlbumId=artists.ArtistId;
+
+
+
+
+
+
+
+
+
